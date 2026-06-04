@@ -68,14 +68,6 @@
                 </div>
                 
                 <div class="mb-3">
-                    {{ form.education.label(class="form-label") }}
-                    {{ form.education(class="form-control", rows=4) }}
-                    {% for error in form.education.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="mb-3">
                     {{ form.photo.label(class="form-label") }}
                     {{ form.photo(class="form-control") }}
                     <small class="text-muted">Поддерживаемые форматы: JPG, PNG, GIF, WEBP. Максимум 5MB.</small>
@@ -85,9 +77,9 @@
                 </div>
                 
                 <div class="mb-3">
-                    {{ form.status.label(class="form-label") }}
-                    {{ form.status(class="form-select") }}
-                    {% for error in form.status.errors %}
+                    {{ form.is_active.label(class="form-label") }}
+                    {{ form.is_active(class="form-select") }}
+                    {% for error in form.is_active.errors %}
                         <div class="text-danger small">{{ error }}</div>
                     {% endfor %}
                 </div>
