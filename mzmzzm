@@ -1,18 +1,20 @@
-# 1. Остановить всё, что связано с Docker
-sudo systemctl stop docker docker.socket containerd
-sudo pkill -f docker
+# Пересобрать контейнеры с новыми моделями
+docker-compose down -v
+docker-compose up -d --build
 
-# 2. Удалить всё (но сохранить образы)
-sudo rm -f /var/run/docker.sock
-sudo rm -rf /var/run/docker/
-sudo rm -rf /run/docker/
+# Подождать
+sleep 20
 
-# 3. Перезапустить Docker
-sudo systemctl start docker
+# Пересоздать таблицы
+docker exec tehnikum_web python -c "
+from app import create_app, db
+app = create_app()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
+    print('✅ Таблицы пересозданы')
+"
 
-# 4. Проверить
-sudo docker ps
-
-# 5. Если не работает - перезагрузить службу
-sudo systemctl restart docker
-sudo systemctl status docker
+# Запустить сидеры
+docker exec tehnikum_web pip install faker
+docker exec tehnikum_web python seeders.py
