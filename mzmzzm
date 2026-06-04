@@ -1,5 +1,78 @@
-katya@katya-Virtual-Machine:~/flask$ docker-compose up -d --build
-[+] up 1/1
- ✘ Image mysql:8.0 Error error from registry: You have reached your unauthenticated pull rate limit... 11.6s
-Error response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
-katya@katya-Virtual-Machine:~/flask$ 
+cat > docker-compose.yml << 'EOF'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tehnikum_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: tehnikum
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppasswd"]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+    networks:
+      - tehnikum_network
+
+  web:
+    image: music_school-web
+    container_name: tehnikum_web
+    restart: always
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=passwd
+      - MYSQL_DB=tehnikum
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - ./app/static/images:/app/app/static/images
+    networks:
+      - tehnikum_network
+    ports:
+      - "5000:5000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: tehnikum_nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./app/static:/static:ro
+    depends_on:
+      - web
+    networks:
+      - tehnikum_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: tehnikum_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - tehnikum_network
+
+networks:
+  tehnikum_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+EOF
