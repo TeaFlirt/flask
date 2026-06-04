@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><i class="bi bi-calculator-fill"></i> Калькулятор</h3>
+                    <p class="mb-0">6 операций: +, -, ×, ÷, степень, 1/x</p>
+                </div>
+                <div class="card-body">
+                    {% if error %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle"></i> {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endif %}
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Выберите операцию</label>
+                            {{ form.operation(class="form-select form-select-lg", id="operation") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">{{ form.operand1.label }}</label>
+                            {{ form.operand1(class="form-control form-control-lg", placeholder="Например: 10, 3.14, -5", autofocus=true) }}
+                            {% for error in form.operand1.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mb-4" id="operand2Div">
+                            <label class="form-label fw-bold">{{ form.operand2.label }}</label>
+                            {{ form.operand2(class="form-control form-control-lg", placeholder="Например: 5, 2, 0.5") }}
+                            <small class="text-muted">* Для операций +, -, ×, ÷, ^</small>
+                            {% for error in form.operand2.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-3">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('main.calculator_history') }}" class="btn btn-info btn-lg">
+                                <i class="bi bi-clock-history"></i> История запросов
+                            </a>
+                        </div>
+                    </form>
+                    
+                    {% if result is not none %}
+                        <div class="alert alert-success mt-4 text-center fade show">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <strong class="fs-4">Результат: {{ result }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Подсказки -->
+            <div class="card mt-3 bg-light">
+                <div class="card-body">
+                    <h6 class="card-title"><i class="bi bi-info-circle"></i> Подсказки:</h6>
+                    <ul class="small mb-0">
+                        <li>Для десятичных чисел используйте точку (.) или запятую (,)</li>
+                        <li>Операция 1/x вычисляет обратное число (1 ÷ число)</li>
+                        <li>Степень: число ^ степень (например, 2^3 = 8)</li>
+                        <li>Все вычисления сохраняются в историю</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Показываем/скрываем второе поле в зависимости от операции
+    const operationSelect = document.getElementById('operation');
+    const operand2Div = document.getElementById('operand2Div');
+    
+    function toggleOperand2() {
+        const operation = operationSelect.value;
+        if (operation === '1/x') {
+            operand2Div.style.display = 'none';
+        } else {
+            operand2Div.style.display = 'block';
+        }
+    }
+    
+    operationSelect.addEventListener('change', toggleOperand2);
+    toggleOperand2(); // Вызываем при загрузке
+    
+    // Подсказка для второго поля при выборе операции
+    const operand2Input = document.querySelector('#operand2');
+    operationSelect.addEventListener('change', function() {
+        const operation = this.value;
+        const operationNames = {
+            '+': 'слагаемое',
+            '-': 'вычитаемое',
+            '*': 'множитель',
+            '/': 'делитель',
+            '^': 'степень'
+        };
+        if (operationNames[operation]) {
+            operand2Input.placeholder = `Введите ${operationNames[operation]}`;
+        } else if (operation === '1/x') {
+            operand2Input.placeholder = 'Не требуется';
+        }
+    });
+    // Инициализация placeholder
+    operationSelect.dispatchEvent(new Event('change'));
+</script>
+{% endblock %}

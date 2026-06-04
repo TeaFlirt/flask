@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Музыкальная школа «Гармония»</title>
+    <!-- Bootstrap 5 CSS + иконки -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            background: #a5a6a8;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 2rem 2rem;
+        }
+        .card-img-top {
+            height: 220px;
+            object-fit: cover;
+        }
+        footer {
+            margin-top: 4rem;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 2rem 0;
+        }
+        .table-responsive {
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .btn-music {
+            background-color: #e67e22;
+            border-color: #d35400;
+            color: white;
+        }
+        .btn-music:hover {
+            background-color: #d35400;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Навигация -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi bi-music-note-beamed"></i> Гармония
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.index') }}"><i class="bi bi-house-door"></i> Главная</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.about') }}"><i class="bi bi-info-circle"></i> О нас</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.contacts') }}"><i class="bi bi-telephone"></i> Контакты</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.gallery') }}"><i class="bi bi-images"></i> Галерея</a></li>
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('main.teachers') }}"><i class="bi bi-people"></i> Преподаватели</a></li>
+<li class="nav-item"><a class="nav-link" href="{{ url_for('main.calculator') }}"><i class="bi bi-calculator"></i> Калькулятор</a></li>
+    {% if current_user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.logout') }}"><i class="bi bi-box-arrow-right"></i> Выйти ({{ current_user.username }})</a></li>
+    {% else %}
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.login') }}"><i class="bi bi-key"></i> Вход</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('main.register') }}"><i class="bi bi-person-plus"></i> Регистрация</a></li>
+    {% endif %}
+</ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Блок с flash-сообщениями -->
+<div class="container mt-3">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endwith %}
+</div>
+
+<!-- Основной контент -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- Футер -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5><i class="bi bi-music-note-list"></i> Музыкальная школа «Гармония»</h5>
+                <p>Обучение музыке для детей и взрослых. Фортепиано, гитара, вокал, скрипка и другие инструменты.</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Контакты</h5>
+                <p><i class="bi bi-geo-alt"></i> г. Москва, ул. Музыкальная, 12<br>
+                <i class="bi bi-telephone"></i> +7 (495) 123-45-67<br>
+                <i class="bi bi-envelope"></i> info@harmony-school.ru</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Часы работы</h5>
+                <p>Пн–Пт: 10:00 – 20:00<br>Сб: 10:00 – 16:00<br>Вс: выходной</p>
+            </div>
+        </div>
+        <hr class="bg-light">
+        <p class="text-center mb-0">© 2026 Музыкальная школа «Гармония» | Все права защищены</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

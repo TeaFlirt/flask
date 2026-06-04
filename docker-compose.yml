@@ -1,0 +1,42 @@
+services:
+  # MySQL база данных
+  mysql:
+    image: mysql:8.0
+    container_name: music_school_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: music_school
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppasswd"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+
+  # Flask приложение
+  web:
+    build: .
+    container_name: music_school_web
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=passwd
+      - MYSQL_DB=music_school
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - ./app/static/images:/app/app/static/images
+
+volumes:
+  mysql_data:

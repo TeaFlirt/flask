@@ -1,0 +1,314 @@
+/* ========================================
+   Глобальные стили и переменные
+   ======================================== */
+:root {
+    --primary-dark: #2c3e50;
+    --primary-accent: #3498db;
+    --music-orange: #e67e22;
+    --music-orange-dark: #d35400;
+    --light-bg: #f8f9fa;
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    --transition-base: all 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background-color: var(--light-bg);
+    color: #212529;
+    line-height: 1.6;
+}
+
+main {
+    min-height: 60vh;
+}
+
+/* ========================================
+   Навигация
+   ======================================== */
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.5px;
+    transition: var(--transition-base);
+}
+
+.navbar-brand i {
+    color: var(--music-orange);
+    margin-right: 0.3rem;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.02);
+    opacity: 0.95;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: var(--transition-base);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--music-orange) !important;
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   Герой-блок (hero-section)
+   ======================================== */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-accent) 100%);
+    color: white;
+    padding: 3.5rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 2rem 2rem;
+    box-shadow: var(--shadow-md);
+}
+
+.hero-section .display-4 {
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-section .lead {
+    font-size: 1.25rem;
+    opacity: 0.95;
+}
+
+/* ========================================
+   Кастомные кнопки
+   ======================================== */
+.btn-music {
+    background-color: var(--music-orange);
+    border-color: var(--music-orange-dark);
+    color: white;
+    font-weight: 600;
+    padding: 0.5rem 1.8rem;
+    border-radius: 2rem;
+    transition: var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-music:hover {
+    background-color: var(--music-orange-dark);
+    border-color: #b34500;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    color: white;
+}
+
+.btn-music:active {
+    transform: translateY(1px);
+}
+
+/* ========================================
+   Карточки
+   ======================================== */
+.card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: var(--transition-base);
+    box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-img-top {
+    height: 220px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.02);
+}
+
+.card-body {
+    padding: 1.2rem;
+}
+
+.card-title {
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+}
+
+/* ========================================
+   Таблицы (галерея, преподаватели)
+   ======================================== */
+.table-responsive {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table {
+    margin-bottom: 0;
+    background-color: white;
+}
+
+.table thead th {
+    background-color: var(--primary-dark);
+    color: white;
+    border-bottom: none;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.05);
+    transition: background-color 0.2s;
+}
+
+.table img {
+    border-radius: 0.5rem;
+    transition: var(--transition-base);
+}
+
+.table img:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-md);
+}
+
+/* Специально для страницы преподавателей (круглые фото) */
+.rounded-circle.object-fit-cover {
+    object-fit: cover;
+    width: 50px;
+    height: 50px;
+    border: 2px solid white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========================================
+   Футер
+   ======================================== */
+footer {
+    margin-top: 4rem;
+    background-color: var(--primary-dark);
+    color: #ecf0f1;
+    padding: 2rem 0 1.5rem;
+    font-size: 0.9rem;
+}
+
+footer a {
+    color: #bdc3c7;
+    text-decoration: none;
+    transition: var(--transition-base);
+}
+
+footer a:hover {
+    color: var(--music-orange);
+    text-decoration: underline;
+}
+
+footer h5 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
+footer hr {
+    background-color: #7f8c8d;
+    margin: 1.5rem 0;
+}
+
+/* ========================================
+   Формы (логин/регистрация)
+   ======================================== */
+.form-control:focus {
+    border-color: var(--music-orange);
+    box-shadow: 0 0 0 0.2rem rgba(230, 126, 34, 0.25);
+}
+
+.card.shadow-lg {
+    border-radius: 1.2rem;
+    border: none;
+}
+
+/* ========================================
+   Адаптивные корректировки
+   ======================================== */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+        border-radius: 0 0 1rem 1rem;
+    }
+    
+    .hero-section .display-4 {
+        font-size: 2rem;
+    }
+    
+    .card-img-top {
+        height: 180px;
+    }
+    
+    .table thead th {
+        font-size: 0.85rem;
+    }
+    
+    .table td {
+        font-size: 0.85rem;
+        word-break: break-word;
+    }
+    
+    .btn-music {
+        padding: 0.4rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.3rem;
+    }
+    
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+    
+    .table img {
+        width: 50px;
+        height: auto;
+    }
+}
+
+/* ========================================
+   Анимации и дополнительные эффекты
+   ======================================== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card, .hero-section, .table-responsive {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Стили для иконок в футере и контактах */
+footer i, .contact-icon {
+    margin-right: 0.5rem;
+    color: var(--music-orange);
+}
+
+/* Для страницы "О нас" список достижений */
+.list-group-item {
+    border-left: 4px solid var(--music-orange);
+    margin-bottom: 0.3rem;
+    border-radius: 0.5rem !important;
+}
+
+/* Для контактов – адаптивная карта */
+.ratio-16x9 iframe {
+    border-radius: 1rem;
+}

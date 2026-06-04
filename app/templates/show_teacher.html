@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>{{ teacher.full_name }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    {% if teacher.photo_path %}
+                        <img src="{{ url_for('static', filename=teacher.photo_path.lstrip('/')) }}" class="img-fluid rounded shadow-sm" alt="Фото преподавателя">
+                    {% else %}
+                        <div class="alert alert-secondary">Фото отсутствует</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <table class="table table-borderless">
+                        <tr><th style="width: 30%">Специализация:</th><td>{{ teacher.specialization }}</td></tr>
+                        <tr><th>Email:</th><td>{{ teacher.email }}</td></tr>
+                        <tr><th>Телефон:</th><td>{{ teacher.phone }}</td></tr>
+                        <tr><th>Стаж работы:</th><td>{{ teacher.experience_years }} лет</td></tr>
+                        <tr><th>Образование:</th><td>{{ teacher.education }}</td></tr>
+                        <tr><th>Зарплата:</th><td>{{ "%.2f"|format(teacher.salary) }} ₽</td></tr>
+                        <tr><th>Статус:</th><td>{{ "Активен" if teacher.status else "Неактивен" }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="{{ url_for('main.teachers') }}" class="btn btn-secondary">← Назад к списку</a>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                <a href="{{ url_for('main.edit_teacher', id=teacher.id) }}" class="btn btn-warning"><i class="bi bi-pencil"></i> Редактировать</a>
+                <form method="POST" action="{{ url_for('main.delete_teacher', id=teacher.id) }}" style="display:inline;" onsubmit="return confirm('Удалить преподавателя?')">
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Удалить</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
