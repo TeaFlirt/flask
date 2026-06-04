@@ -1,251 +1,224 @@
-cat > seeders.py << 'EOF'
-#!/usr/bin/env python3
-import time
-import random
-from app import create_app, db
-from app.models import User, Teacher, Student
-from werkzeug.security import generate_password_hash
-from faker import Faker
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h3><i class="bi bi-person-badge"></i> Добавление преподавателя</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    {{ form.full_name.label(class="form-label") }}
+                    {{ form.full_name(class="form-control") }}
+                    {% for error in form.full_name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.specialization.label(class="form-label") }}
+                    {{ form.specialization(class="form-control") }}
+                    {% for error in form.specialization.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {% for error in form.email.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control") }}
+                            {% for error in form.phone.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.experience_years.label(class="form-label") }}
+                            {{ form.experience_years(class="form-control") }}
+                            {% for error in form.experience_years.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.salary.label(class="form-label") }}
+                            {{ form.salary(class="form-control") }}
+                            {% for error in form.salary.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.photo.label(class="form-label") }}
+                    {{ form.photo(class="form-control") }}
+                    <small class="text-muted">Поддерживаемые форматы: JPG, PNG, GIF, WEBP. Максимум 5MB.</small>
+                    {% for error in form.photo.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.is_active.label(class="form-label") }}
+                    {{ form.is_active(class="form-select") }}
+                    {% for error in form.is_active.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('main.teachers') }}" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-fake = Faker('ru_RU')
 
-# Данные для генерации
-TEACHER_SPECIALIZATIONS = [
-    'Программирование', 'Веб-разработка', 'Базы данных', 'Сети и телекоммуникации',
-    'Кибербезопасность', 'Искусственный интеллект', 'Робототехника', 'Мехатроника',
-    'Промышленная автоматика', 'Электротехника', 'Бухгалтерский учет', 'Финансы',
-    'Менеджмент', 'Маркетинг', 'Графический дизайн', '3D-моделирование',
-    'Мобильная разработка', 'Тестирование ПО', 'DevOps', 'Аналитика данных'
-]
 
-STUDENT_SPECIALTIES = [
-    'Программирование', 'Веб-разработка', 'Базы данных', 'Кибербезопасность',
-    'Робототехника', 'Мехатроника', 'Промышленная автоматика', 'Бухгалтерский учет',
-    'Финансы', 'Менеджмент', 'Маркетинг', 'Графический дизайн'
-]
 
-GROUPS = ['ИС-21', 'ИС-22', 'ИС-23', 'ПК-21', 'ПК-22', 'ПК-23', 'РБ-21', 'РБ-22', 
-          'БУ-21', 'БУ-22', 'ФК-21', 'ФК-22', 'МН-21', 'МН-22', 'ДЗ-21']
 
-def seed_users(count=10):
-    """Создание обычных пользователей"""
-    print(f"👥 Создание {count} пользователей...")
-    
-    existing = User.query.filter_by(is_admin=False).count()
-    if existing >= count:
-        print(f"   ℹ️ Уже есть {existing} пользователей, пропускаем")
-        return
-    
-    users = []
-    for i in range(count - existing):
-        user = User(
-            username=fake.user_name(),
-            email=fake.email(),
-            password_hash=generate_password_hash('user123'),
-            is_admin=False,
-            created_at=int(time.time()) - random.randint(0, 90*24*3600),
-            updated_at=int(time.time()) - random.randint(0, 30*24*3600)
-        )
-        users.append(user)
-    
-    if users:
-        db.session.add_all(users)
-        db.session.commit()
-        print(f"   ✅ Добавлено {len(users)} пользователей (пароль: user123)")
-    else:
-        print(f"   ℹ️ Пользователей достаточно")
 
-def seed_teachers(count=30):
-    """Создание преподавателей"""
-    print(f"👨‍🏫 Создание {count} преподавателей...")
-    
-    existing = Teacher.query.count()
-    if existing >= count:
-        print(f"   ℹ️ Уже есть {existing} преподавателей, пропускаем")
-        return
-    
-    teachers = []
-    for i in range(count - existing):
-        # ФИО (чередуем мужские и женские)
-        if i % 2 == 0:
-            full_name = fake.name_male()
-        else:
-            full_name = fake.name_female()
-        
-        # Рандомное фото от 1 до 10
-        photo_num = random.randint(1, 10)
-        
-        teacher = Teacher(
-            full_name=full_name,
-            specialization=random.choice(TEACHER_SPECIALIZATIONS),
-            email=fake.email(),
-            phone=fake.phone_number(),
-            experience_years=random.randint(0, 45),
-            salary=round(random.uniform(50000, 180000), 2),
-            photo_path=f'/images/teachers/teacher_{photo_num}.jpg',
-            is_active=random.choice([True, True, True, False]),  # 75% активны
-            created_at=int(time.time()) - random.randint(0, 365*24*3600),
-            updated_at=int(time.time()) - random.randint(0, 30*24*3600)
-        )
-        teachers.append(teacher)
-    
-    if teachers:
-        db.session.add_all(teachers)
-        db.session.commit()
-        print(f"   ✅ Добавлено {len(teachers)} преподавателей")
-    
-    # Статистика
-    active = Teacher.query.filter_by(is_active=True).count()
-    print(f"   📊 Активных: {active}, Неактивных: {Teacher.query.count() - active}")
 
-def seed_students(count=50):
-    """Создание студентов"""
-    print(f"👨‍🎓 Создание {count} студентов...")
-    
-    existing = Student.query.count()
-    if existing >= count:
-        print(f"   ℹ️ Уже есть {existing} студентов, пропускаем")
-        return
-    
-    students = []
-    for i in range(count - existing):
-        # ФИО
-        if i % 2 == 0:
-            full_name = fake.name_male()
-        else:
-            full_name = fake.name_female()
-        
-        # Дата рождения (16-25 лет)
-        birth_year = random.randint(1999, 2009)
-        birth_month = random.randint(1, 12)
-        birth_day = random.randint(1, 28)
-        birth_date = f"{birth_day:02d}.{birth_month:02d}.{birth_year}"
-        
-        # Рандомное фото от 1 до 10
-        photo_num = random.randint(1, 10)
-        
-        student = Student(
-            full_name=full_name,
-            birth_date=birth_date,
-            group=random.choice(GROUPS),
-            course=random.randint(1, 4),
-            specialty=random.choice(STUDENT_SPECIALTIES),
-            phone=fake.phone_number() if random.choice([True, False]) else None,
-            photo_path=f'/images/students/student_{photo_num}.jpg',
-            is_active=random.choice([True, True, True, False]),
-            created_at=int(time.time()) - random.randint(0, 180*24*3600),
-            updated_at=int(time.time()) - random.randint(0, 60*24*3600)
-        )
-        students.append(student)
-    
-    if students:
-        db.session.add_all(students)
-        db.session.commit()
-        print(f"   ✅ Добавлено {len(students)} студентов")
-    
-    # Статистика по курсам
-    print(f"   📊 По курсам:")
-    for course in range(1, 5):
-        count = Student.query.filter_by(course=course).count()
-        print(f"      {course} курс: {count} студентов")
 
-def seed_admin():
-    """Создание администратора"""
-    print("👑 Проверка администратора...")
-    
-    admin = User.query.filter_by(email='admin@tehnikum.ru').first()
-    if not admin:
-        admin = User(
-            username='admin',
-            email='admin@tehnikum.ru',
-            password_hash=generate_password_hash('admin123'),
-            is_admin=True,
-            created_at=int(time.time()),
-            updated_at=int(time.time())
-        )
-        db.session.add(admin)
-        db.session.commit()
-        print("   ✅ Администратор создан: admin@tehnikum.ru / admin123")
-    else:
-        print("   ℹ️ Администратор уже существует")
 
-def show_statistics():
-    """Показать статистику"""
-    print("\n" + "="*50)
-    print("📊 СТАТИСТИКА БАЗЫ ДАННЫХ")
-    print("="*50)
-    
-    users_total = User.query.count()
-    users_admin = User.query.filter_by(is_admin=True).count()
-    users_regular = users_total - users_admin
-    
-    print(f"\n👥 ПОЛЬЗОВАТЕЛИ:")
-    print(f"   Всего: {users_total}")
-    print(f"   Администраторы: {users_admin}")
-    print(f"   Обычные: {users_regular}")
-    
-    print(f"\n👨‍🏫 ПРЕПОДАВАТЕЛИ:")
-    print(f"   Всего: {Teacher.query.count()}")
-    print(f"   Активные: {Teacher.query.filter_by(is_active=True).count()}")
-    
-    print(f"\n👨‍🎓 СТУДЕНТЫ:")
-    print(f"   Всего: {Student.query.count()}")
-    print(f"   Активные: {Student.query.filter_by(is_active=True).count()}")
-    
-    print(f"\n🏫 ГРУППЫ:")
-    groups = db.session.query(Student.group, db.func.count(Student.id)).group_by(Student.group).all()
-    for group, count in sorted(groups, key=lambda x: x[0]):
-        print(f"   {group}: {count} студентов")
-    
-    print("="*50)
 
-def clear_all_data():
-    """Очистка всех данных (осторожно!)"""
-    print("⚠️  ВНИМАНИЕ! Это удалит ВСЕ данные!")
-    confirm = input("Вы уверены? Напишите 'ДА': ")
-    
-    if confirm == "ДА":
-        Teacher.query.delete()
-        Student.query.delete()
-        User.query.filter_by(is_admin=False).delete()
-        db.session.commit()
-        print("✅ Все данные удалены!")
-        return True
-    else:
-        print("❌ Очистка отменена")
-        return False
 
-def main():
-    print("="*50)
-    print("🔄 ЗАПУСК СИДЕРОВ")
-    print("="*50)
-    
-    app = create_app()
-    with app.app_context():
-        # Создаём таблицы если их нет
-        db.create_all()
-        print("📁 Таблицы проверены\n")
-        
-        # Заполняем данными
-        seed_admin()
-        seed_users(10)
-        seed_teachers(30)
-        seed_students(50)
-        
-        # Показываем статистику
-        show_statistics()
-        
-        print("\n✅ Сидеры выполнены успешно!")
-        print("\n🔑 ДАННЫЕ ДЛЯ ВХОДА:")
-        print("   Администратор: admin@tehnikum.ru / admin123")
-        print("   Обычный пользователь: любой email из users / user123")
 
-if __name__ == '__main__':
-    import sys
-    if len(sys.argv) > 1 and sys.argv[1] == '--clear':
-        app = create_app()
-        with app.app_context():
-            clear_all_data()
-    else:
-        main()
-EOF
+
+
+
+
+
+
+
+
+
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-dark">
+            <h3><i class="bi bi-pencil-square"></i> Редактирование: {{ teacher.full_name }}</h3>
+        </div>
+        <div class="card-body">
+            {% if teacher.photo_path %}
+            <div class="row mb-4">
+                <div class="col-md-3 text-center">
+                    <img src="{{ url_for('static', filename=teacher.photo_path.lstrip('/')) }}" 
+                         alt="Текущее фото" 
+                         class="img-fluid rounded shadow-sm" 
+                         style="max-height: 150px;">
+                    <p class="text-muted small mt-2">Текущее фото</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <form method="POST" enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+                
+                <div class="mb-3">
+                    {{ form.full_name.label(class="form-label") }}
+                    {{ form.full_name(class="form-control") }}
+                    {% for error in form.full_name.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.specialization.label(class="form-label") }}
+                    {{ form.specialization(class="form-control") }}
+                    {% for error in form.specialization.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {% for error in form.email.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.phone.label(class="form-label") }}
+                            {{ form.phone(class="form-control") }}
+                            {% for error in form.phone.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.experience_years.label(class="form-label") }}
+                            {{ form.experience_years(class="form-control") }}
+                            {% for error in form.experience_years.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            {{ form.salary.label(class="form-label") }}
+                            {{ form.salary(class="form-control") }}
+                            {% for error in form.salary.errors %}
+                                <div class="text-danger small">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.photo.label(class="form-label") }}
+                    {{ form.photo(class="form-control") }}
+                    <small class="text-muted">Оставьте пустым, чтобы не менять текущее фото. Поддерживаемые форматы: JPG, PNG, GIF, WEBP.</small>
+                    {% for error in form.photo.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.is_active.label(class="form-label") }}
+                    {{ form.is_active(class="form-select") }}
+                    {% for error in form.is_active.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="d-flex gap-2">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('main.show_teacher', id=teacher.id) }}" class="btn btn-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
