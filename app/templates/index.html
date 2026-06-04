@@ -1,66 +1,77 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Герой-блок -->
 <div class="hero-section text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold">Добро пожаловать в мир музыки!</h1>
-        <p class="lead">Раскройте свой талант вместе с профессиональными педагогами</p>
-        <a href="/teachers" class="btn btn-music btn-lg mt-3"><i class="bi bi-person-badge"></i> Наши преподаватели</a>
+        <h1 class="display-4 fw-bold">Добро пожаловать в Техникум «Современные технологии»!</h1>
+        <p class="lead">Качественное образование для успешной карьеры</p>
+        <a href="/students" class="btn btn-music btn-lg mt-3"><i class="bi bi-people"></i> Наши студенты</a>
     </div>
 </div>
 
 <div class="container">
-    <!-- Фотографии школы (не менее 3) -->
-    <h2 class="text-center mb-4"><i class="bi bi-camera"></i> Атмосфера школы</h2>
+    <h2 class="text-center mb-4"><i class="bi bi-camera"></i> Техникум в фотографиях</h2>
     <div class="row g-4">
-        {% for photo in photos %}
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
-                <img src="{{ url_for('static', filename=photo) }}" class="card-img-top" alt="Фото школы {{ loop.index }}">
+                <img src="{{ url_for('static', filename='images/pages/main1.jpg') }}" class="card-img-top" alt="Корпус техникума">
                 <div class="card-body">
-                    <p class="card-text">Уютные классы, современное оборудование и вдохновляющая обстановка.</p>
+                    <p class="card-text">Современные учебные корпуса с новейшим оборудованием</p>
                 </div>
             </div>
         </div>
-        {% endfor %}
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <img src="{{ url_for('static', filename='images/pages/main2.jpg') }}" class="card-img-top" alt="Лаборатория">
+                <div class="card-body">
+                    <p class="card-text">Лаборатории с высокотехнологичным оборудованием</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <img src="{{ url_for('static', filename='images/pages/main3.jpg') }}" class="card-img-top" alt="Библиотека">
+                <div class="card-body">
+                    <p class="card-text">Библиотека и медиатека для самостоятельной работы</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Текстовый блок о школе -->
     <div class="row mt-5 align-items-center">
-
+        <div class="col-md-12">
             <h2><i class="bi bi-stars"></i> Почему выбирают нас?</h2>
-            <p>Основанная в 1995 году, музыкальная школа «Гармония» выпустила более 2000 учеников, многие из которых стали лауреатами всероссийских и международных конкурсов. Мы предлагаем индивидуальный подход, гибкий график занятий и возможность выступать на настоящей сцене.</p>
+            <p>Техникум «Современные технологии» основан в 1995 году. За 30 лет работы мы выпустили более 5000 специалистов, востребованных на рынке труда. Наши выпускники работают в ведущих IT-компаниях, на производственных предприятиях и в сфере услуг.</p>
             <ul class="list-unstyled">
-                <li><i class="bi bi-check-circle-fill text-success"></i> 30+ высококвалифицированных педагогов</li>
-                <li><i class="bi bi-check-circle-fill text-success"></i> 7 концертных залов и 50 учебных классов</li>
-                <li><i class="bi bi-check-circle-fill text-success"></i> Ежегодные отчётные концерты и фестивали</li>
-                <li><i class="bi bi-check-circle-fill text-success"></i> Подготовка к поступлению в профильные вузы</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> 50+ высококвалифицированных преподавателей</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> 15 современных лабораторий и мастерских</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Практика на ведущих предприятиях города</li>
+                <li><i class="bi bi-check-circle-fill text-success"></i> Трудоустройство после окончания обучения</li>
             </ul>
             <a href="/about" class="btn btn-outline-primary mt-2">Узнать больше →</a>
+        </div>
     </div>
 
-    <!-- Блок новостей или направлений -->
     <div class="row mt-5 text-center">
         <div class="col-md-4">
             <div class="p-3 border rounded bg-white h-100">
-                <i class="bi bi-piano fs-1 text-primary"></i>
-                <h4>Фортепиано</h4>
-                <p>Классическое и эстрадное фортепиано для детей от 5 лет и взрослых.</p>
+                <i class="bi bi-laptop fs-1 text-primary"></i>
+                <h4>IT-специальности</h4>
+                <p>Программирование, веб-разработка, базы данных, кибербезопасность</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="p-3 border rounded bg-white h-100">
-                <i class="bi bi-mic fs-1 text-primary"></i>
-                <h4>Вокал</h4>
-                <p>Академический, эстрадный и джазовый вокал. Постановка голоса и дыхания.</p>
+                <i class="bi bi-gear fs-1 text-primary"></i>
+                <h4>Технические специальности</h4>
+                <p>Мехатроника, робототехника, промышленная автоматика</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="p-3 border rounded bg-white h-100">
-                <i class="bi bi-guitar fs-1 text-primary"></i>
-                <h4>Гитара</h4>
-                <p>Классическая, акустическая, электрогитара. Индивидуальные и групповые занятия.</p>
+                <i class="bi bi-building fs-1 text-primary"></i>
+                <h4>Экономические специальности</h4>
+                <p>Бухгалтерский учет, финансы, менеджмент</p>
             </div>
         </div>
     </div>

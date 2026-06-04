@@ -3,13 +3,13 @@
 <div class="container py-4">
     <div class="card shadow-sm">
         <div class="card-header bg-warning text-dark">
-            <h3><i class="bi bi-pencil-square"></i> Редактирование: {{ teacher.full_name }}</h3>
+            <h3><i class="bi bi-pencil-square"></i> Редактирование: {{ student.full_name }}</h3>
         </div>
         <div class="card-body">
-            {% if teacher.photo_path %}
+            {% if student.photo_path %}
             <div class="row mb-4">
                 <div class="col-md-3 text-center">
-                    <img src="{{ url_for('static', filename=teacher.photo_path.lstrip('/')) }}" 
+                    <img src="{{ url_for('static', filename=student.photo_path.lstrip('/')) }}" 
                          alt="Текущее фото" 
                          class="img-fluid rounded shadow-sm" 
                          style="max-height: 150px;">
@@ -30,9 +30,10 @@
                 </div>
                 
                 <div class="mb-3">
-                    {{ form.specialization.label(class="form-label") }}
-                    {{ form.specialization(class="form-control") }}
-                    {% for error in form.specialization.errors %}
+                    {{ form.birth_date.label(class="form-label") }}
+                    {{ form.birth_date(class="form-control", placeholder="ДД.ММ.ГГГГ") }}
+                    <small class="text-muted">Пример: 15.05.2005</small>
+                    {% for error in form.birth_date.errors %}
                         <div class="text-danger small">{{ error }}</div>
                     {% endfor %}
                 </div>
@@ -40,39 +41,18 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control") }}
-                            {% for error in form.email.errors %}
+                            {{ form.group.label(class="form-label") }}
+                            {{ form.group(class="form-control") }}
+                            {% for error in form.group.errors %}
                                 <div class="text-danger small">{{ error }}</div>
                             {% endfor %}
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            {{ form.phone.label(class="form-label") }}
-                            {{ form.phone(class="form-control") }}
-                            {% for error in form.phone.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.experience_years.label(class="form-label") }}
-                            {{ form.experience_years(class="form-control") }}
-                            {% for error in form.experience_years.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.salary.label(class="form-label") }}
-                            {{ form.salary(class="form-control") }}
-                            {% for error in form.salary.errors %}
+                            {{ form.course.label(class="form-label") }}
+                            {{ form.course(class="form-control") }}
+                            {% for error in form.course.errors %}
                                 <div class="text-danger small">{{ error }}</div>
                             {% endfor %}
                         </div>
@@ -80,9 +60,18 @@
                 </div>
                 
                 <div class="mb-3">
-                    {{ form.education.label(class="form-label") }}
-                    {{ form.education(class="form-control", rows=4) }}
-                    {% for error in form.education.errors %}
+                    {{ form.specialty.label(class="form-label") }}
+                    {{ form.specialty(class="form-control") }}
+                    {% for error in form.specialty.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mb-3">
+                    {{ form.phone.label(class="form-label") }}
+                    {{ form.phone(class="form-control", placeholder="+7 (XXX) XXX-XX-XX") }}
+                    <small class="text-muted">Необязательное поле</small>
+                    {% for error in form.phone.errors %}
                         <div class="text-danger small">{{ error }}</div>
                     {% endfor %}
                 </div>
@@ -97,16 +86,16 @@
                 </div>
                 
                 <div class="mb-3">
-                    {{ form.status.label(class="form-label") }}
-                    {{ form.status(class="form-select") }}
-                    {% for error in form.status.errors %}
+                    {{ form.is_active.label(class="form-label") }}
+                    {{ form.is_active(class="form-select") }}
+                    {% for error in form.is_active.errors %}
                         <div class="text-danger small">{{ error }}</div>
                     {% endfor %}
                 </div>
                 
                 <div class="d-flex gap-2">
                     {{ form.submit(class="btn btn-primary") }}
-                    <a href="{{ url_for('main.show_teacher', id=teacher.id) }}" class="btn btn-secondary">Отмена</a>
+                    <a href="{{ url_for('main.show_student', id=student.id) }}" class="btn btn-secondary">Отмена</a>
                 </div>
             </form>
         </div>

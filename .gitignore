@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+venv/
+ENV/
+env/
+
+# Flask
+instance/
+.webassets-cache
+.env.local
+
+# Docker
+*.log
+*.pid
+*.pid.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Static files (keep structure but not content)
+app/static/images/teachers/*
+app/static/images/students/*
+app/static/images/pages/*
+!app/static/images/teachers/.gitkeep
+!app/static/images/students/.gitkeep
+!app/static/images/pages/.gitkeep
+
+# Secrets
+config.py.local
+*.secret
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+seed_tehnikum.py
+*.pyc

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>{{ student.full_name }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    {% if student.photo_path %}
+                        <img src="{{ url_for('static', filename=student.photo_path.lstrip('/')) }}" class="img-fluid rounded shadow-sm" alt="Фото студента" style="max-height: 300px;">
+                    {% else %}
+                        <div class="alert alert-secondary">Фото отсутствует</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <table class="table table-borderless">
+                        <tr><th style="width: 30%">Дата рождения:</th><td>{{ student.birth_date }}</td></tr>
+                        <tr><th>Группа:</th><td>{{ student.group }}</td></tr>
+                        <tr><th>Курс:</th><td>{{ student.course }}</td></tr>
+                        <tr><th>Специальность:</th><td>{{ student.specialty }}</td></tr>
+                        <tr><th>Телефон:</th><td>{{ student.phone or '—' }}</td></tr>
+                        <tr><th>Статус:</th><td>{{ "Активен" if student.is_active else "Неактивен" }}</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="{{ url_for('main.students') }}" class="btn btn-secondary">← Назад к списку</a>
+            {% if current_user.is_authenticated and current_user.is_admin %}
+                <a href="{{ url_for('main.edit_student', id=student.id) }}" class="btn btn-warning"><i class="bi bi-pencil"></i> Редактировать</a>
+                <form method="POST" action="{{ url_for('main.delete_student', id=student.id) }}" style="display:inline;" onsubmit="return confirm('Удалить студента?')">
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash"></i> Удалить</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

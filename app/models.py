@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from datetime import datetime
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'  # имя таблицы в MySQL
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
@@ -21,15 +21,14 @@ class Teacher(db.Model):
     __tablename__ = 'teachers'
 
     id = db.Column(db.Integer, primary_key=True)
-    full_name = db.Column(db.String(255), nullable=False)
-    specialization = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(255), nullable=False)
-    phone = db.Column(db.String(20), nullable=False)
-    experience_years = db.Column(db.Integer, default=0)
-    education = db.Column(db.Text, nullable=False)
-    photo_path = db.Column(db.String(255), nullable=True)
-    salary = db.Column(db.Numeric(10,2), default=0.00)
-    status = db.Column(db.Integer, default=1)  # 1-активен
+    full_name = db.Column(db.String(255), nullable=False)           # Строка
+    specialization = db.Column(db.String(100), nullable=False)      # Строка
+    email = db.Column(db.String(255), nullable=False)               # Строка
+    phone = db.Column(db.String(20), nullable=False)                # Строка
+    experience_years = db.Column(db.Integer, default=0)             # Целое число
+    salary = db.Column(db.Numeric(10,2), default=0.00)              # Дробное число
+    photo_path = db.Column(db.String(255), nullable=False)          # Строка (ОБЯЗАТЕЛЬНО)
+    is_active = db.Column(db.Boolean, default=True)                 # Булево значение
     created_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()))
     updated_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()), onupdate=lambda: int(datetime.now().timestamp()))
 
@@ -37,43 +36,20 @@ class Teacher(db.Model):
         return f'<Teacher {self.full_name}>'
 
 
-class Gallery(db.Model):
-    __tablename__ = 'gallery'
+class Student(db.Model):
+    __tablename__ = 'students'
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    file_path = db.Column(db.String(255), nullable=False)
-    file_size = db.Column(db.Integer, default=0)
-    mime_type = db.Column(db.String(100), default='image/jpeg')
-    width = db.Column(db.Integer, default=0)
-    height = db.Column(db.Integer, default=0)
-    category = db.Column(db.String(50), default='other')
-    sort_order = db.Column(db.Integer, default=0)
-    is_published = db.Column(db.Integer, default=1)   # 1-да, 0-нет
-    uploaded_by = db.Column(db.Integer, nullable=True)  # id пользователя
+    full_name = db.Column(db.String(255), nullable=False)           # Строка (ФИО)
+    birth_date = db.Column(db.String(10), nullable=False)           # Строка (Дата рождения)
+    group = db.Column(db.String(50), nullable=False)                # Строка (Группа)
+    course = db.Column(db.Integer, default=1)                       # Целое число (Курс)
+    specialty = db.Column(db.String(100), nullable=False)           # Строка (Специальность)
+    phone = db.Column(db.String(20), nullable=True)                 # Строка (Телефон)
+    photo_path = db.Column(db.String(255), nullable=False)          # Строка (ОБЯЗАТЕЛЬНО)
+    is_active = db.Column(db.Boolean, default=True)                 # Булево значение
     created_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()))
     updated_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()), onupdate=lambda: int(datetime.now().timestamp()))
 
     def __repr__(self):
-        return f'<Gallery {self.title}>'
-
-
-class CalculatorHistory(db.Model):
-    __tablename__ = 'calculator_history'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    expression = db.Column(db.String(500), nullable=False)  # исходное выражение
-    result = db.Column(db.String(100), nullable=False)      # результат
-    operation = db.Column(db.String(20), nullable=False)    # тип операции
-    operand1 = db.Column(db.Float, nullable=False)          # первый операнд
-    operand2 = db.Column(db.Float, nullable=True)           # второй операнд (для унарных операций - NULL)
-    ip_address = db.Column(db.String(45), nullable=True)    # IP пользователя
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)  # если пользователь авторизован
-    created_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()))
-    
-    # Связь с пользователем
-    user = db.relationship('User', backref='calculations')
-    
-    def __repr__(self):
-        return f'<CalculatorHistory {self.expression} = {self.result}>'
+        return f'<Student {self.full_name}>'

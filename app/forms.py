@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField, SelectField, DecimalField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField, IntegerField, SelectField, DecimalField, FileField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, Optional, NumberRange
 from app.models import User
 
@@ -32,34 +32,18 @@ class TeacherForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=255)])
     phone = StringField('Телефон', validators=[DataRequired(), Length(max=20)])
     experience_years = IntegerField('Стаж (лет)', validators=[NumberRange(0, 60)], default=0)
-    education = TextAreaField('Образование', validators=[DataRequired()])
-    photo_path = StringField('Путь к фото', validators=[Optional(), Length(max=255)])
     salary = DecimalField('Зарплата', places=2, default=0.00)
-    status = SelectField('Статус', choices=[(1, 'Активен'), (0, 'Неактивен')], coerce=int, default=1)
+    photo = FileField('Фото преподавателя', validators=[DataRequired()])
+    is_active = SelectField('Статус', choices=[(1, 'Активен'), (0, 'Неактивен')], coerce=int, default=1)
     submit = SubmitField('Сохранить')
 
-class GalleryForm(FlaskForm):
-    title = StringField('Название', validators=[DataRequired(), Length(max=255)])
-    description = TextAreaField('Описание', validators=[Optional()])
-    file_path = StringField('Путь к файлу', validators=[DataRequired(), Length(max=255)])
-    file_size = IntegerField('Размер (байты)', default=0)
-    mime_type = StringField('MIME-тип', default='image/jpeg')
-    width = IntegerField('Ширина (px)', default=0)
-    height = IntegerField('Высота (px)', default=0)
-    category = StringField('Категория', default='other')
-    sort_order = IntegerField('Порядок сортировки', default=0)
-    is_published = SelectField('Опубликовано', choices=[(1, 'Да'), (0, 'Нет')], coerce=int, default=1)
+class StudentForm(FlaskForm):
+    full_name = StringField('ФИО', validators=[DataRequired(), Length(max=255)])
+    birth_date = StringField('Дата рождения (ДД.ММ.ГГГГ)', validators=[DataRequired(), Length(max=10)])
+    group = StringField('Группа', validators=[DataRequired(), Length(max=50)])
+    course = IntegerField('Курс', validators=[NumberRange(1, 5)], default=1)
+    specialty = StringField('Специальность', validators=[DataRequired(), Length(max=100)])
+    phone = StringField('Телефон', validators=[Optional(), Length(max=20)])
+    photo = FileField('Фото студента', validators=[DataRequired()])
+    is_active = SelectField('Статус', choices=[(1, 'Активен'), (0, 'Неактивен')], coerce=int, default=1)
     submit = SubmitField('Сохранить')
-
-class CalculatorForm(FlaskForm):
-    operand1 = StringField('Первое число', validators=[DataRequired()])
-    operand2 = StringField('Второе число', validators=[Optional()])  # необязательно для унарных операций
-    operation = SelectField('Операция', choices=[
-        ('+', '+ (сложение)'),
-        ('-', '- (вычитание)'),
-        ('*', '* (умножение)'),
-        ('/', '/ (деление)'),
-        ('^', '^ (возведение в степень)'),
-        ('1/x', '1/x (обратное число)')
-    ], validators=[DataRequired()])
-    submit = SubmitField('Вычислить')

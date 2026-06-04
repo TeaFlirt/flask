@@ -1,53 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container py-4">
-    <h1 class="text-center mb-4">🎓 О музыкальной школе «Гармония»</h1>
+    <h1 class="text-center mb-4">🏫 О техникуме «Современные технологии»</h1>
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <p class="lead">Мы верим, что музыка способна изменить жизнь. Наша миссия — дать качественное музыкальное образование каждому, независимо от возраста и уровня подготовки.</p>
+            <p class="lead">Мы готовим востребованных специалистов для цифровой экономики и промышленности. Наша миссия — дать качественное образование, которое позволит выпускникам успешно построить карьеру.</p>
         </div>
     </div>
 
-    <!-- Фотографии (не менее 5) -->
-    <h2 class="text-center mt-5 mb-3"><i class="bi bi-images"></i> Наша школа в фотографиях</h2>
+    <h2 class="text-center mt-5 mb-3"><i class="bi bi-images"></i> Техникум в фотографиях</h2>
     <div class="row g-3">
         {% for photo in photos %}
         <div class="col-md-4 col-lg-3">
             <div class="card h-100 shadow-sm">
                 <img src="{{ url_for('static', filename=photo) }}" class="card-img-top" alt="Фото {{ loop.index }}" style="height: 180px; object-fit: cover;">
                 <div class="card-body p-2 text-center">
-                    <small class="text-muted">{{ ['Концертный зал', 'Класс фортепиано', 'Урок вокала', 'Библиотека', 'Студия звукозаписи'][loop.index0] }}</small>
+                    <small class="text-muted">{{ ['Главный корпус', 'IT-лаборатория', 'Мастерские', 'Библиотека', 'Студенческая столовая'][loop.index0] }}</small>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
-    <!-- История и достижения -->
     <div class="row mt-5">
         <div class="col-md-6">
-            <h3><i class="bi bi-clock-history"></i> История школы</h3>
-            <p>Школа основана в 1995 году заслуженным деятелем искусств России Петром Ивановичем Соловьёвым. За 30 лет работы мы воспитали тысячи музыкантов, среди которых лауреаты международных конкурсов, артисты оркестров и просто люди, для которых музыка стала любимым хобби.</p>
-            <p>В 2005 году школа получила статус «Образцовое учреждение дополнительного образования», а в 2020 году мы открыли современную студию звукозаписи и концертный зал на 250 мест с великолепной акустикой.</p>
+            <h3><i class="bi bi-clock-history"></i> История техникума</h3>
+            <p>Техникум основан в 1995 году. За 30 лет работы мы прошли путь от небольшого училища до современного образовательного центра. В 2010 году техникум получил статус «Инновационное образовательное учреждение», а в 2020 году открыл IT-полигон для подготовки специалистов в области искусственного интеллекта.</p>
+            <p>Сегодня в техникуме обучается более 1500 студентов по 15 специальностям. Мы сотрудничаем с 50+ предприятиями-партнерами для прохождения практики и трудоустройства выпускников.</p>
         </div>
         <div class="col-md-6">
             <h3><i class="bi bi-trophy"></i> Достижения</h3>
             <ul class="list-group list-group-flush">
-                <li class="list-group-item">🏆 Лауреат Всероссийского конкурса «Лучшая школа искусств» (2018, 2022)</li>
-                <li class="list-group-item">🎼 45 учеников стали стипендиатами фонда «Новые имена»</li>
-                <li class="list-group-item">🎹 Ежегодный фестиваль «Весенняя капель» с участием 300 юных музыкантов</li>
-                <li class="list-group-item">🤝 Партнёрство с Московской консерваторией и Гнесинкой</li>
+                <li class="list-group-item">🏆 Победитель Всероссийского конкурса «Лучший техникум года» (2019, 2022)</li>
+                <li class="list-group-item">💻 200+ студентов стали победителями профессиональных чемпионатов WorldSkills</li>
+                <li class="list-group-item">🤝 Партнерство с 50+ ведущими IT-компаниями и заводами</li>
+                <li class="list-group-item">📊 95% выпускников трудоустраиваются в первый год после окончания</li>
             </ul>
         </div>
     </div>
 
-    <!-- Принципы -->
     <div class="bg-light p-4 rounded-3 mt-5">
         <h3 class="text-center">Наши принципы</h3>
         <div class="row text-center mt-3">
-            <div class="col-sm-4"><i class="bi bi-heart fs-1 text-danger"></i><br>Индивидуальный подход</div>
-            <div class="col-sm-4"><i class="bi bi-people fs-1 text-primary"></i><br>Дружеская атмосфера</div>
-            <div class="col-sm-4"><i class="bi bi-graph-up fs-1 text-success"></i><br>Ориентация на результат</div>
+            <div class="col-sm-4"><i class="bi bi-mortarboard fs-1 text-danger"></i><br>Качество образования</div>
+            <div class="col-sm-4"><i class="bi bi-briefcase fs-1 text-primary"></i><br>Связь с производством</div>
+            <div class="col-sm-4"><i class="bi bi-robot fs-1 text-success"></i><br>Инновации и технологии</div>
         </div>
     </div>
 </div>
