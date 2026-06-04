@@ -1,5 +1,53 @@
-# Использовать зеркало Yandex
+katya@katya-Virtual-Machine:~/flask$ sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<EOF
+{
+  "dns": ["8.8.8.8", "8.8.4.4"]
+}
+EOF
+
+# Перезапустить Docker
+sudo systemctl restart docker
+
+# Проверить
+docker pull nginx:alpine
+[sudo: authenticate] Password:           
+{
+  "dns": ["8.8.8.8", "8.8.4.4"]
+}
+eofError response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
+katya@katya-Virtual-Machine:~/flask$ eof
+Command 'eof' not found, did you mean:
+  command 'aof' from snap aof (0.3.1)
+  command 'eog' from snap eog (47.0)
+  command 'eom' from deb eom (1.28.0-2build1)
+  command 'eox' from deb keyboards-rg (0.3+nmu2build1)
+  command 'eos' from deb elk-lapw (10.4.9-1build1)
+  command 'eog' from deb eog (49.1-1build1)
+See 'snap info <snapname>' for additional versions.
+katya@katya-Virtual-Machine:~/flask$ sudo tee /etc/docker/daemon.json <<EOF
+{
+  "dns": ["8.8.8.8", "8.8.4.4"]
+}
+EOF
+{
+  "dns": ["8.8.8.8", "8.8.4.4"]
+}
+katya@katya-Virtual-Machine:~/flask$ sudo systemctl restart docker
+katya@katya-Virtual-Machine:~/flask$ docker pull nginx:alpine
+Error response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
+katya@katya-Virtual-Machine:~/flask$ docker login
+
+USING WEB-BASED LOGIN
+
+i Info → To sign in with credentials on the command line, use 'docker login -u <username>'
+         
+
+Your one-time device confirmation code is: TRDL-SDDF
+Press ENTER to open your browser or submit your device code here: https://login.docker.com/activate
+
+Waiting for authentication in the browser…
+^Clogin canceled
+katya@katya-Virtual-Machine:~/flask$ sudo tee /etc/docker/daemon.json <<EOF
 {
   "registry-mirrors": [
     "https://mirror.gcr.io",
@@ -8,9 +56,14 @@ sudo tee /etc/docker/daemon.json <<EOF
   ]
 }
 EOF
-
-sudo systemctl restart docker
-
-# Попробовать снова
-docker pull nginx:alpine
-docker-compose up -d --build
+{
+  "registry-mirrors": [
+    "https://mirror.gcr.io",
+    "https://dockerhub.timeweb.cloud",
+    "https://dockerhub1.beget.com"
+  ]
+}
+katya@katya-Virtual-Machine:~/flask$ sudo systemctl restart docker
+katya@katya-Virtual-Machine:~/flask$ docker pull nginx:alpine
+Error response from daemon: failed to resolve reference "docker.io/library/nginx:alpine": failed to authorize: failed to fetch anonymous token: Get "https://auth.docker.io/token?scope=repository%3Alibrary%2Fnginx%3Apull&service=registry.docker.io": net/http: TLS handshake timeout
+katya@katya-Virtual-Machine:~/flask$ 
