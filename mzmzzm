@@ -1,98 +1,91 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container py-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-success text-white">
-            <h3><i class="bi bi-person-badge"></i> Добавление преподавателя</h3>
-        </div>
-        <div class="card-body">
-            <form method="POST" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                
-                <div class="mb-3">
-                    {{ form.full_name.label(class="form-label") }}
-                    {{ form.full_name(class="form-control") }}
-                    {% for error in form.full_name.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.specialization.label(class="form-label") }}
-                    {{ form.specialization(class="form-control") }}
-                    {% for error in form.specialization.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control") }}
-                            {% for error in form.email.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.phone.label(class="form-label") }}
-                            {{ form.phone(class="form-control") }}
-                            {% for error in form.phone.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.experience_years.label(class="form-label") }}
-                            {{ form.experience_years(class="form-control") }}
-                            {% for error in form.experience_years.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.salary.label(class="form-label") }}
-                            {{ form.salary(class="form-control") }}
-                            {% for error in form.salary.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.photo.label(class="form-label") }}
-                    {{ form.photo(class="form-control") }}
-                    <small class="text-muted">Поддерживаемые форматы: JPG, PNG, GIF, WEBP. Максимум 5MB.</small>
-                    {% for error in form.photo.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.is_active.label(class="form-label") }}
-                    {{ form.is_active(class="form-select") }}
-                    {% for error in form.is_active.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="d-flex gap-2">
-                    {{ form.submit(class="btn btn-primary") }}
-                    <a href="{{ url_for('main.teachers') }}" class="btn btn-secondary">Отмена</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endblock %}
+from app import db
+from flask_login import UserMixin
+from datetime import datetime
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    is_active = db.Column(db.Boolean, default=True)  # 🔥 NEW
+    last_login = db.Column(db.DateTime, nullable=True)  # 🔥 NEW (дата/время)
+    login_count = db.Column(db.Integer, default=0)  # 🔥 NEW (счетчик)
+    birth_date = db.Column(db.Date, nullable=True)  # 🔥 NEW (дата)
+    phone = db.Column(db.String(20), nullable=True)  # 🔥 NEW
+    avatar_path = db.Column(db.String(255), nullable=True)  # 🔥 NEW
+    created_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()))
+    updated_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()), onupdate=lambda: int(datetime.now().timestamp()))
+
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+
+class Teacher(db.Model):
+    __tablename__ = 'teachers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(255), nullable=False)
+    specialization = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(255), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    experience_years = db.Column(db.Integer, default=0)
+    salary = db.Column(db.Numeric(10,2), default=0.00)
+    photo_path = db.Column(db.String(255), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # 🔥 НОВЫЕ ПОЛЯ 🔥
+    birth_date = db.Column(db.Date, nullable=True)  # Дата рождения
+    hire_date = db.Column(db.Date, nullable=True)  # Дата приема на работу
+    degree = db.Column(db.String(100), nullable=True)  # Ученая степень (к.т.н., д.п.н., etc)
+    position = db.Column(db.String(100), nullable=True)  # Должность (зав. кафедрой, ст. преподаватель)
+    rating = db.Column(db.Float, default=0.0)  # Рейтинг преподавателя (0-5)
+    lesson_count = db.Column(db.Integer, default=0)  # Количество проведенных уроков
+    office_number = db.Column(db.String(10), nullable=True)  # Номер кабинета
+    internal_phone = db.Column(db.String(10), nullable=True)  # Внутренний телефон
+    has_degree = db.Column(db.Boolean, default=False)  # Есть ли ученая степень
+    metadata_json = db.Column(db.JSON, nullable=True)  # JSON поле для доп. информации
+    
+    created_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()))
+    updated_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()), onupdate=lambda: int(datetime.now().timestamp()))
+
+    def __repr__(self):
+        return f'<Teacher {self.full_name}>'
+
+
+class Student(db.Model):
+    __tablename__ = 'students'
+
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(255), nullable=False)
+    birth_date = db.Column(db.Date, nullable=True)  # 🔥 ТЕПЕРЬ DATE, а не String!
+    group = db.Column(db.String(50), nullable=False)
+    course = db.Column(db.Integer, default=1)
+    specialty = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=True)
+    photo_path = db.Column(db.String(255), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+    
+    # 🔥 НОВЫЕ ПОЛЯ 🔥
+    enrollment_date = db.Column(db.Date, nullable=True)  # Дата поступления
+    graduation_date = db.Column(db.Date, nullable=True)  # Дата окончания
+    parent_phone = db.Column(db.String(20), nullable=True)  # Телефон родителя
+    email = db.Column(db.String(255), nullable=True)  # Email студента
+    average_grade = db.Column(db.Float, default=0.0)  # Средний балл (0-5)
+    scholarship = db.Column(db.Numeric(10,2), default=0.00)  # Стипендия
+    attendance_rate = db.Column(db.Float, default=100.0)  # Посещаемость (%)
+    debt_count = db.Column(db.Integer, default=0)  # Количество задолженностей
+    is_contract = db.Column(db.Boolean, default=False)  # Контракт/бюджет
+    dormitory = db.Column(db.Boolean, default=False)  # Живет в общежитии
+    metadata_json = db.Column(db.JSON, nullable=True)  # JSON поле
+    
+    created_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()))
+    updated_at = db.Column(db.Integer, default=lambda: int(datetime.now().timestamp()), onupdate=lambda: int(datetime.now().timestamp()))
+
+    def __repr__(self):
+        return f'<Student {self.full_name}>'
 
 
 
@@ -115,110 +108,270 @@
 
 
 
-{% extends "base.html" %}
-{% block content %}
-<div class="container py-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-warning text-dark">
-            <h3><i class="bi bi-pencil-square"></i> Редактирование: {{ teacher.full_name }}</h3>
-        </div>
-        <div class="card-body">
-            {% if teacher.photo_path %}
-            <div class="row mb-4">
-                <div class="col-md-3 text-center">
-                    <img src="{{ url_for('static', filename=teacher.photo_path.lstrip('/')) }}" 
-                         alt="Текущее фото" 
-                         class="img-fluid rounded shadow-sm" 
-                         style="max-height: 150px;">
-                    <p class="text-muted small mt-2">Текущее фото</p>
-                </div>
-            </div>
-            {% endif %}
-            
-            <form method="POST" enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-                
-                <div class="mb-3">
-                    {{ form.full_name.label(class="form-label") }}
-                    {{ form.full_name(class="form-control") }}
-                    {% for error in form.full_name.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.specialization.label(class="form-label") }}
-                    {{ form.specialization(class="form-control") }}
-                    {% for error in form.specialization.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control") }}
-                            {% for error in form.email.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.phone.label(class="form-label") }}
-                            {{ form.phone(class="form-control") }}
-                            {% for error in form.phone.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.experience_years.label(class="form-label") }}
-                            {{ form.experience_years(class="form-control") }}
-                            {% for error in form.experience_years.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="mb-3">
-                            {{ form.salary.label(class="form-label") }}
-                            {{ form.salary(class="form-control") }}
-                            {% for error in form.salary.errors %}
-                                <div class="text-danger small">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.photo.label(class="form-label") }}
-                    {{ form.photo(class="form-control") }}
-                    <small class="text-muted">Оставьте пустым, чтобы не менять текущее фото. Поддерживаемые форматы: JPG, PNG, GIF, WEBP.</small>
-                    {% for error in form.photo.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="mb-3">
-                    {{ form.is_active.label(class="form-label") }}
-                    {{ form.is_active(class="form-select") }}
-                    {% for error in form.is_active.errors %}
-                        <div class="text-danger small">{{ error }}</div>
-                    {% endfor %}
-                </div>
-                
-                <div class="d-flex gap-2">
-                    {{ form.submit(class="btn btn-primary") }}
-                    <a href="{{ url_for('main.show_teacher', id=teacher.id) }}" class="btn btn-secondary">Отмена</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-{% endblock %}
+
+#!/usr/bin/env python3
+import time
+import random
+from datetime import datetime, timedelta
+from app import create_app, db
+from app.models import User, Teacher, Student
+from werkzeug.security import generate_password_hash
+from faker import Faker
+
+fake = Faker('ru_RU')
+
+# Данные для генерации
+TEACHER_SPECIALIZATIONS = [
+    'Программирование', 'Веб-разработка', 'Базы данных', 'Сети и телекоммуникации',
+    'Кибербезопасность', 'Искусственный интеллект', 'Робототехника', 'Мехатроника',
+    'Промышленная автоматика', 'Электротехника', 'Бухгалтерский учет', 'Финансы',
+    'Менеджмент', 'Маркетинг', 'Графический дизайн'
+]
+
+DEGREES = ['к.т.н.', 'д.т.н.', 'к.п.н.', 'д.п.н.', 'к.э.н.', 'д.э.н.', None]
+POSITIONS = ['Ассистент', 'Старший преподаватель', 'Доцент', 'Профессор', 'Зав. кафедрой']
+
+STUDENT_SPECIALTIES = [
+    'Программирование', 'Веб-разработка', 'Базы данных', 'Кибербезопасность',
+    'Робототехника', 'Мехатроника', 'Бухгалтерский учет', 'Финансы', 'Менеджмент'
+]
+
+GROUPS = ['ИС-21', 'ИС-22', 'ИС-23', 'ПК-21', 'ПК-22', 'РБ-21', 'БУ-21', 'ФК-21', 'МН-21']
+
+def random_date(start_year=1970, end_year=2005):
+    """Генерация случайной даты"""
+    start = datetime(start_year, 1, 1)
+    end = datetime(end_year, 12, 31)
+    return start + timedelta(days=random.randint(0, (end - start).days))
+
+def seed_users(count=10):
+    print(f"👥 Создание {count} пользователей...")
+    
+    existing = User.query.filter_by(is_admin=False).count()
+    if existing >= count:
+        print(f"   ℹ️ Уже есть {existing} пользователей")
+        return
+    
+    users = []
+    for _ in range(count - existing):
+        user = User(
+            username=fake.user_name(),
+            email=fake.email(),
+            password_hash=generate_password_hash('user123'),
+            is_admin=False,
+            is_active=random.choice([True, True, True, False]),
+            last_login=random_date(2023, 2025) if random.choice([True, False]) else None,
+            login_count=random.randint(0, 500),
+            birth_date=random_date(1980, 2005),
+            phone=fake.phone_number() if random.choice([True, False]) else None,
+            avatar_path=f'/images/avatars/user_{random.randint(1, 5)}.jpg' if random.choice([True, False]) else None,
+            created_at=int(time.time()) - random.randint(0, 365*24*3600),
+            updated_at=int(time.time()) - random.randint(0, 30*24*3600)
+        )
+        users.append(user)
+    
+    if users:
+        db.session.add_all(users)
+        db.session.commit()
+        print(f"   ✅ Добавлено {len(users)} пользователей")
+
+def seed_teachers(count=30):
+    print(f"👨‍🏫 Создание {count} преподавателей...")
+    
+    existing = Teacher.query.count()
+    if existing >= count:
+        print(f"   ℹ️ Уже есть {existing} преподавателей")
+        return
+    
+    teachers = []
+    for _ in range(count - existing):
+        birth = random_date(1960, 1995)
+        hire = random_date(1990, 2020)
+        
+        degree = random.choice(DEGREES)
+        has_degree = degree is not None
+        
+        teacher = Teacher(
+            full_name=fake.name_male() if random.choice([True, False]) else fake.name_female(),
+            specialization=random.choice(TEACHER_SPECIALIZATIONS),
+            email=fake.email(),
+            phone=fake.phone_number(),
+            experience_years=random.randint(0, 45),
+            salary=round(random.uniform(50000, 180000), 2),
+            photo_path=f'/images/teachers/teacher_{random.randint(1, 10)}.jpg',
+            is_active=random.choice([True, True, True, False]),
+            # Новые поля
+            birth_date=birth,
+            hire_date=hire,
+            degree=degree,
+            position=random.choice(POSITIONS),
+            rating=round(random.uniform(3.5, 5.0), 1),
+            lesson_count=random.randint(100, 5000),
+            office_number=f"{random.randint(1, 5)}{random.choice(['01', '02', '03', '04', '05'])}",
+            internal_phone=str(random.randint(100, 999)),
+            has_degree=has_degree,
+            metadata_json={
+                'certifications': random.sample(['Python', 'Java', 'SQL', 'AWS', 'Docker'], k=random.randint(1, 3)),
+                'publications': random.randint(0, 50),
+                'conferences': random.randint(0, 20)
+            } if random.choice([True, False]) else None,
+            created_at=int(time.time()) - random.randint(0, 365*24*3600),
+            updated_at=int(time.time()) - random.randint(0, 30*24*3600)
+        )
+        teachers.append(teacher)
+    
+    if teachers:
+        db.session.add_all(teachers)
+        db.session.commit()
+        print(f"   ✅ Добавлено {len(teachers)} преподавателей")
+
+def seed_students(count=50):
+    print(f"👨‍🎓 Создание {count} студентов...")
+    
+    existing = Student.query.count()
+    if existing >= count:
+        print(f"   ℹ️ Уже есть {existing} студентов")
+        return
+    
+    students = []
+    for _ in range(count - existing):
+        birth = random_date(1998, 2008)
+        enrollment = random_date(2020, 2024)
+        graduation = enrollment + timedelta(days=random.randint(730, 1460))
+        
+        student = Student(
+            full_name=fake.name_male() if random.choice([True, False]) else fake.name_female(),
+            birth_date=birth,  # Теперь DATE
+            group=random.choice(GROUPS),
+            course=random.randint(1, 4),
+            specialty=random.choice(STUDENT_SPECIALTIES),
+            phone=fake.phone_number() if random.choice([True, False]) else None,
+            photo_path=f'/images/students/student_{random.randint(1, 10)}.jpg',
+            is_active=random.choice([True, True, True, False]),
+            # Новые поля
+            enrollment_date=enrollment,
+            graduation_date=graduation if random.choice([True, False]) else None,
+            parent_phone=fake.phone_number() if random.choice([True, False]) else None,
+            email=fake.email() if random.choice([True, False]) else None,
+            average_grade=round(random.uniform(3.0, 5.0), 1),
+            scholarship=round(random.uniform(0, 5000), 2),
+            attendance_rate=round(random.uniform(70.0, 100.0), 1),
+            debt_count=random.randint(0, 5),
+            is_contract=random.choice([True, False]),
+            dormitory=random.choice([True, False]),
+            metadata_json={
+                'hobbies': random.sample(['спорт', 'музыка', 'программирование', 'рисование', 'танцы'], k=random.randint(1, 3)),
+                'social_networks': {
+                    'vk': f'vk.com/id{random.randint(100000, 999999)}',
+                    'tg': f'@{fake.user_name()}'
+                } if random.choice([True, False]) else None
+            } if random.choice([True, False]) else None,
+            created_at=int(time.time()) - random.randint(0, 180*24*3600),
+            updated_at=int(time.time()) - random.randint(0, 60*24*3600)
+        )
+        students.append(student)
+    
+    if students:
+        db.session.add_all(students)
+        db.session.commit()
+        print(f"   ✅ Добавлено {len(students)} студентов")
+
+def seed_admin():
+    print("👑 Проверка администратора...")
+    
+    admin = User.query.filter_by(email='admin@tehnikum.ru').first()
+    if not admin:
+        admin = User(
+            username='admin',
+            email='admin@tehnikum.ru',
+            password_hash=generate_password_hash('admin123'),
+            is_admin=True,
+            is_active=True,
+            created_at=int(time.time()),
+            updated_at=int(time.time())
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print("   ✅ Администратор создан: admin@tehnikum.ru / admin123")
+    else:
+        print("   ℹ️ Администратор уже существует")
+
+def show_statistics():
+    print("\n" + "="*50)
+    print("📊 СТАТИСТИКА БАЗЫ ДАННЫХ")
+    print("="*50)
+    
+    print(f"\n👥 ПОЛЬЗОВАТЕЛИ: {User.query.count()}")
+    print(f"   Администраторов: {User.query.filter_by(is_admin=True).count()}")
+    print(f"   Активных: {User.query.filter_by(is_active=True).count()}")
+    
+    print(f"\n👨‍🏫 ПРЕПОДАВАТЕЛИ: {Teacher.query.count()}")
+    print(f"   Активных: {Teacher.query.filter_by(is_active=True).count()}")
+    print(f"   С ученой степенью: {Teacher.query.filter_by(has_degree=True).count()}")
+    print(f"   Средний рейтинг: {db.session.query(db.func.avg(Teacher.rating)).scalar():.1f}")
+    
+    print(f"\n👨‍🎓 СТУДЕНТЫ: {Student.query.count()}")
+    print(f"   Активных: {Student.query.filter_by(is_active=True).count()}")
+    print(f"   На контракте: {Student.query.filter_by(is_contract=True).count()}")
+    print(f"   Средний балл: {db.session.query(db.func.avg(Student.average_grade)).scalar():.1f}")
+    print(f"   В общежитии: {Student.query.filter_by(dormitory=True).count()}")
+    
+    print("="*50)
+
+def main():
+    print("="*50)
+    print("🔄 ЗАПУСК СИДЕРОВ (расширенная версия)")
+    print("="*50)
+    
+    app = create_app()
+    with app.app_context():
+        db.create_all()
+        print("📁 Таблицы проверены\n")
+        
+        seed_admin()
+        seed_users(10)
+        seed_teachers(30)
+        seed_students(50)
+        
+        show_statistics()
+        
+        print("\n✅ Сидеры выполнены успешно!")
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Пересобрать контейнеры с новыми моделями
+docker-compose down -v
+docker-compose up -d --build
+
+# Подождать
+sleep 20
+
+# Пересоздать таблицы
+docker exec tehnikum_web python -c "
+from app import create_app, db
+app = create_app()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
+    print('✅ Таблицы пересозданы')
+"
+
+# Запустить сидеры
+docker exec tehnikum_web pip install faker
+docker exec tehnikum_web python seeders.py
