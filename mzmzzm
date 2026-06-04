@@ -1,69 +1,117 @@
-katya@katya-Virtual-Machine:~/flask$ sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<EOF
-{
-  "dns": ["8.8.8.8", "8.8.4.4"]
+cd ~/flask
+
+# Создать Dockerfile для nginx
+cat > Dockerfile.nginx << 'EOF'
+FROM alpine:3.19
+
+RUN apk add --no-cache nginx
+
+RUN mkdir -p /run/nginx /var/log/nginx
+
+COPY nginx.conf /etc/nginx/nginx.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
+EOF
+
+# Создать минимальный nginx.conf
+cat > nginx.conf << 'EOF'
+events {
+    worker_connections 1024;
+}
+
+http {
+    upstream flask_app {
+        server web:5000;
+    }
+
+    server {
+        listen 80;
+        server_name localhost;
+
+        client_max_body_size 10M;
+
+        location /static/ {
+            alias /static/;
+            expires 30d;
+        }
+
+        location / {
+            proxy_pass http://flask_app;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
 }
 EOF
 
-# Перезапустить Docker
-sudo systemctl restart docker
+# Обновить docker-compose.yml
+cat > docker-compose.yml << 'EOF'
+services:
+  mysql:
+    image: mariadb:10.11
+    container_name: tehnikum_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: passwd
+      MYSQL_DATABASE: tehnikum
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-ppasswd"]
+      timeout: 10s
+      retries: 10
+      interval: 10s
+    networks:
+      - tehnikum_network
 
-# Проверить
-docker pull nginx:alpine
-[sudo: authenticate] Password:           
-{
-  "dns": ["8.8.8.8", "8.8.4.4"]
-}
-eofError response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
-katya@katya-Virtual-Machine:~/flask$ eof
-Command 'eof' not found, did you mean:
-  command 'aof' from snap aof (0.3.1)
-  command 'eog' from snap eog (47.0)
-  command 'eom' from deb eom (1.28.0-2build1)
-  command 'eox' from deb keyboards-rg (0.3+nmu2build1)
-  command 'eos' from deb elk-lapw (10.4.9-1build1)
-  command 'eog' from deb eog (49.1-1build1)
-See 'snap info <snapname>' for additional versions.
-katya@katya-Virtual-Machine:~/flask$ sudo tee /etc/docker/daemon.json <<EOF
-{
-  "dns": ["8.8.8.8", "8.8.4.4"]
-}
+  web:
+    build: .
+    container_name: tehnikum_web
+    restart: always
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=passwd
+      - MYSQL_DB=tehnikum
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - ./app/static/images:/app/app/static/images
+    networks:
+      - tehnikum_network
+    expose:
+      - "5000"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: tehnikum_nginx
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app/static:/static:ro
+    depends_on:
+      - web
+    networks:
+      - tehnikum_network
+
+networks:
+  tehnikum_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
 EOF
-{
-  "dns": ["8.8.8.8", "8.8.4.4"]
-}
-katya@katya-Virtual-Machine:~/flask$ sudo systemctl restart docker
-katya@katya-Virtual-Machine:~/flask$ docker pull nginx:alpine
-Error response from daemon: error from registry: You have reached your unauthenticated pull rate limit. https://www.docker.com/increase-rate-limit
-katya@katya-Virtual-Machine:~/flask$ docker login
 
-USING WEB-BASED LOGIN
-
-i Info → To sign in with credentials on the command line, use 'docker login -u <username>'
-         
-
-Your one-time device confirmation code is: TRDL-SDDF
-Press ENTER to open your browser or submit your device code here: https://login.docker.com/activate
-
-Waiting for authentication in the browser…
-^Clogin canceled
-katya@katya-Virtual-Machine:~/flask$ sudo tee /etc/docker/daemon.json <<EOF
-{
-  "registry-mirrors": [
-    "https://mirror.gcr.io",
-    "https://dockerhub.timeweb.cloud",
-    "https://dockerhub1.beget.com"
-  ]
-}
-EOF
-{
-  "registry-mirrors": [
-    "https://mirror.gcr.io",
-    "https://dockerhub.timeweb.cloud",
-    "https://dockerhub1.beget.com"
-  ]
-}
-katya@katya-Virtual-Machine:~/flask$ sudo systemctl restart docker
-katya@katya-Virtual-Machine:~/flask$ docker pull nginx:alpine
-Error response from daemon: failed to resolve reference "docker.io/library/nginx:alpine": failed to authorize: failed to fetch anonymous token: Get "https://auth.docker.io/token?scope=repository%3Alibrary%2Fnginx%3Apull&service=registry.docker.io": net/http: TLS handshake timeout
-katya@katya-Virtual-Machine:~/flask$ 
+# Запустить
+docker-compose up -d --build
