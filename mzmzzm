@@ -1,0 +1,6 @@
+katya@katya-Virtual-Machine:~/flask$ docker-compose up -d --build
+[+] up 2/2
+ ! Image mysql:8.0    Interrupted                                                                      14.2s
+ ✘ Image nginx:alpine Error failed to resolve reference "docker.io/library/nginx:alpine": fai...       14.2s
+Error response from daemon: failed to resolve reference "docker.io/library/nginx:alpine": failed to authorize: failed to fetch anonymous token: Get "https://auth.docker.io/token?scope=repository%3Alibrary%2Fnginx%3Apull&service=registry.docker.io": net/http: TLS handshake timeout
+katya@katya-Virtual-Machine:~/flask$ 
