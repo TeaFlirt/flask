@@ -1,18 +1,18 @@
-katya@katya-Virtual-Machine:~/flask$ sudo docker-compose down -v
-[sudo: authenticate] Password:           
-[+] down 2/2
- ✘ Container tehnikum_nginx      Error Error while Stopping                                            14.3s
- ✘ Container tehnikum_phpmyadmin Error Error while Stopping                                            14.3s
-Error response from daemon: cannot stop container: b9a3bfe9c0c99f9a3a4fb06741e083c7098129649f84ff55d9af867848180110: permission denied
-katya@katya-Virtual-Machine:~/flask$ docker-compose down -v
-[+] down 2/2
- ✘ Container tehnikum_phpmyadmin Error Error while Stopping                              14.1s
- ✘ Container tehnikum_nginx      Error Error while Stopping                              14.1s
-Error response from daemon: cannot stop container: d4021bb9029757b0bcdaf4a308f189bae6ddb0f6a6b1302bae04c686084463ac: permission denied
-katya@katya-Virtual-Machine:~/flask$ sudo systemctl stop docker
-Stopping 'docker.service', but its triggering units are still active:
-docker.socket
-katya@katya-Virtual-Machine:~/flask$ sudo rm -f /var/run/docker.sock
-katya@katya-Virtual-Machine:~/flask$ sudo systemctl start docker
-katya@katya-Virtual-Machine:~/flask$ docker ps
-failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon is running: dial unix /var/run/docker.sock: connect: no such file or directory
+# 1. Остановить всё, что связано с Docker
+sudo systemctl stop docker docker.socket containerd
+sudo pkill -f docker
+
+# 2. Удалить всё (но сохранить образы)
+sudo rm -f /var/run/docker.sock
+sudo rm -rf /var/run/docker/
+sudo rm -rf /run/docker/
+
+# 3. Перезапустить Docker
+sudo systemctl start docker
+
+# 4. Проверить
+sudo docker ps
+
+# 5. Если не работает - перезагрузить службу
+sudo systemctl restart docker
+sudo systemctl status docker
